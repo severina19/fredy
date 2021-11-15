@@ -1,5 +1,6 @@
 node_modules/
 ui/public/
 db/
+kafka/
 npm-debug.log
 .DS_Store

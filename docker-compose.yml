@@ -51,6 +51,7 @@ services:
             - fredy_net
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
+            - ./kafka:/kafka
 
 networks:
     fredy_net:
