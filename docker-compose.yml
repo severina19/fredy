@@ -45,7 +45,7 @@ services:
             DOCKER_API_VERSION: 1.22
             KAFKA_ADVERTISED_HOST_NAME: kafka
             KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-            KAFKA_CREATE_TOPICS: "fredy.test"
+            KAFKA_CREATE_TOPICS: "fredy.listings"
             KAFKA_ADVERTISED_PORT: 9092
         networks:
             - fredy_net
