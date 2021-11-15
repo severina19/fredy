@@ -1,17 +1,58 @@
-version: '3.3'
+version: "3.7"
 services:
-  fredy:
-    container_name: fredy
-    # build from empty build folder to reduce size of image
-    build:
-      context: ./build
-      dockerfile: Dockerfile
-      args:
-        repo: https://github.com/orangecoding/fredy.git
-    image: fredy/fredy
-    # map existing config and database
-    volumes:
-      - ./conf:/conf
-      - ./db:/db
-    ports:
-        - 9998:9998
+    fredy:
+        container_name: fredy
+        # build from empty build folder to reduce size of image
+        build:
+            context: . #/build
+            dockerfile: Dockerfile
+            args:
+                repo: https://github.com/orangecoding/fredy.git
+        image: fredy/fredy
+        # map existing config and database
+        volumes:
+            - ./conf:/conf
+            - ./db:/db
+        ports:
+            - "9998:9998"
+        environment:
+            KAFKA_BOOTSTRAP_SERVER: kafka:9092
+            KAFKA_TOPIC: fredy.listings
+        networks:
+            - fredy_net
+    zookeeper:
+        container_name: fredy_zookeeper
+        hostname: zookeeper
+        labels:
+            description: fredy ZooKeeper
+            name: zookeeper
+        image: wurstmeister/zookeeper
+        ports:
+            - "2181:2181"
+        networks:
+            - fredy_net
+
+    kafka:
+        container_name: fredy_kafka
+        hostname: kafka
+        labels:
+            description: fredy Kafka
+            name: kafka
+        image: wurstmeister/kafka:2.12-2.0.1
+        ports:
+            - "9092:9092"
+        environment:
+            DOCKER_API_VERSION: 1.22
+            KAFKA_ADVERTISED_HOST_NAME: kafka
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+            KAFKA_CREATE_TOPICS: "fredy.test"
+            KAFKA_ADVERTISED_PORT: 9092
+        networks:
+            - fredy_net
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+    fredy_net:
+        name: fredy_net
+        driver: bridge
